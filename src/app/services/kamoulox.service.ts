@@ -1,13 +1,7 @@
 import { Injectable } from "@angular/core";
 import { KamouloxConfigSubject, FieldConfig } from "./config.subject";
 import { KamouloxSubject } from "./data.subject";
-import {
-  Observable,
-  merge,
-  ObservableInput,
-  combineLatest,
-  interval
-} from "rxjs";
+import { Observable, merge, combineLatest } from "rxjs";
 import { ignoreElements, map, distinctUntilChanged, tap } from "rxjs/operators";
 import { mitterrandRule, pressingRule, beaujolaisRule } from "./kamoulox.rules";
 

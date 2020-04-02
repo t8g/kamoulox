@@ -46,6 +46,7 @@ export class FormComponent implements OnInit {
     this.kamoulox$ = kamouloxService.kamoulox$;
 
     this.form.valueChanges.subscribe(kamoulox => this.kamoulox$.next(kamoulox));
+
     this.kamoulox$.subscribe(kamoulox =>
       this.form.patchValue(kamoulox, { emitEvent: false })
     );
