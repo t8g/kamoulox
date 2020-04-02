@@ -1,1 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import url("https://fonts.googleapis.com/css2?family=Baloo+Thambi+2&display=swap");
+
+form {
+  display: flex;
+  flex-direction: column;
+  font-family: "Baloo Thambi 2", cursive;
+  padding: 2em;
+  width: 30vw;
+}
+
+form div.form-group {
+  display: flex;
+  flex-direction: column;
+  color: #888;
+  margin-bottom: 1em;
+  align-items: flex-start;
+}
+
+form div.form-group label {
+  font-size: 1.1em;
+}
+
+/* form label.required:before {
+  content: "*";
+} */
+
+input,
+select {
+  padding: 0.2em 0.6em;
+  font-size: 1.3em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #777;
+  align-self: stretch;
+}
+
+button {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0.4em 1em;
+  font-size: 1.1em;
+  background-color: #688b58;
+  align-self: flex-end;
+  color: #eee;
+}
