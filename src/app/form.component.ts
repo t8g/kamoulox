@@ -3,10 +3,14 @@ import { FormGroup, FormControl } from "@angular/forms";
 import { KamouloxService } from "./services/kamoulox.service";
 import { KamouloxConfigSubject } from "./services/config.subject";
 import { KamouloxSubject } from "./services/data.subject";
+import { IKamoulox } from './models/kamoulox';
 
 @Component({
   selector: "kmx-form",
   template: `
+  <form name="kamouloxForm" #kamouloxForm="ngForm" novalidate>
+    <kmx-canard [canard]="kamoulox.canard"></kmx-canard>
+    </form>
     <form [formGroup]="form">
       <div class="form-group">
         <label>canard</label>
@@ -32,6 +36,13 @@ import { KamouloxSubject } from "./services/data.subject";
   `
 })
 export class FormComponent implements OnInit {
+
+  kamoulox: IKamoulox = {
+    canard: {
+      name: 'tintin'
+    }
+  };
+
   form = new FormGroup({
     canard: new FormControl(),
     beaujolais: new FormControl(),
