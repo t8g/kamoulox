@@ -1,5 +1,5 @@
-import { ICanard } from './canard';
+import { Canard } from './canard';
 
 export interface IKamoulox {
-	canard: ICanard;
+	canard: Canard;
 }

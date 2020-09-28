@@ -1,3 +1,4 @@
-export interface ICanard {
+export interface Canard {
 	name: string;
+	color: string;
 }

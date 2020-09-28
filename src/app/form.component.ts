@@ -1,70 +1,86 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl } from "@angular/forms";
-import { KamouloxService } from "./services/kamoulox.service";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { FormGroup, FormControl, NgForm } from "@angular/forms";
+import { Kamoulox, KamouloxService } from "./services/kamoulox.service";
 import { KamouloxConfigSubject } from "./services/config.subject";
 import { KamouloxSubject } from "./services/data.subject";
 import { IKamoulox } from './models/kamoulox';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: "kmx-form",
   template: `
-  <form name="kamouloxForm" #kamouloxForm="ngForm" novalidate>
-    <kmx-canard [canard]="kamoulox.canard"></kmx-canard>
-    </form>
-    <form [formGroup]="form">
-      <div class="form-group">
-        <label>canard</label>
-        <input formControlName="canard" />
-      </div>
+    <form name="kamouloxForm" #kamouloxForm="ngForm" novalidate autocomplete="off" (ngSubmit)="onSubmit()">
+      <kmx-canard [canard]="kamoulox.canard"></kmx-canard>
       <div class="form-group">
         <label>beaujolais</label>
-        <input formControlName="beaujolais" type="number" />
+        <input name="beaujolais" [(ngModel)]="kamoulox.beaujolais" type="number" />
       </div>
       <div class="form-group" *ngIf="config$.mitterrand.visible | async">
-        <label>mitterrand</label>
-        <select formControlName="mitterrand">
+        <label>
+          mitterrand
+        </label>
+        <select name="mitterrand" [(ngModel)]="kamoulox.mitterrand" [disabled]="config$.mitterrand.disabled | async">
           <option>parapluie</option>
           <option>homard</option>
         </select>
       </div>
       <div class="form-group">
         <label>{{ config$.pressing.label | async }}</label>
-        <input formControlName="pressing" />
+        <input name="pressing" [(ngModel)]="kamoulox.pressing" />
       </div>
-      <button>Kamoulox !</button>
+      <button type="submit">Kamoulox !</button>
+
     </form>
   `
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnInit, AfterViewInit {
 
-  kamoulox: IKamoulox = {
-    canard: {
-      name: 'tintin'
-    }
-  };
+  kamoulox: Kamoulox;
 
-  form = new FormGroup({
-    canard: new FormControl(),
-    beaujolais: new FormControl(),
-    mitterrand: new FormControl(),
-    pressing: new FormControl()
-  });
+  // form = new FormGroup({
+  //   canard: new FormControl(),
+  //   beaujolais: new FormControl(),
+  //   mitterrand: new FormControl(),
+  //   pressing: new FormControl()
+  // });
+  @ViewChild('kamouloxForm')
+  public kamouloxNgForm: NgForm;
+
   config$: KamouloxConfigSubject;
   kamoulox$: KamouloxSubject;
 
   constructor(private kamouloxService: KamouloxService) {
-    this.config$ = kamouloxService.config$;
-    this.kamoulox$ = kamouloxService.kamoulox$;
+    this.config$ = this.kamouloxService.config$;
+    this.kamoulox$ = this.kamouloxService.kamoulox$;
 
-    this.form.valueChanges.subscribe(kamoulox => this.kamoulox$.next(kamoulox));
+    this.kamoulox = this.kamoulox$.value;
+  }
 
-    this.kamoulox$.subscribe(kamoulox =>
-      this.form.patchValue(kamoulox, { emitEvent: false })
-    );
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+
+    this.kamouloxNgForm.form.valueChanges
+    .pipe(delay(0))
+    .subscribe(() => {
+      this.kamoulox$.next(this.deepDuplicate(this.kamoulox));
+    });
+
+    this.kamoulox$.subscribe(kamoulox => {
+      this.kamoulox = this.deepDuplicate(kamoulox);
+    });
 
     // Release the Kraken!
     this.kamouloxService.init().subscribe();
   }
 
-  ngOnInit() {}
+  public onSubmit(): void {
+    this.kamouloxNgForm.form.markAllAsTouched();
+    console.log('this.kamoulox', this.kamoulox);
+  }
+
+  private deepDuplicate<T>(input: T): T {
+    return JSON.parse(JSON.stringify(input));
+  }
 }

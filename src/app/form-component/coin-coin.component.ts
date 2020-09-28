@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SkipSelf } from "@angular/core";
 import { ControlContainer } from '@angular/forms';
-import { ICanard } from '../models/canard';
+import { Canard } from '../models/canard';
 
 export const controlContainerFactory = (container: ControlContainer) => container;
 
@@ -18,16 +18,25 @@ export const controlContainerFactory = (container: ControlContainer) => containe
       <div class="form-group" [ngModelGroup]="componentId" #modelGroup="ngModelGroup">
         <label>canard</label>
         <input type="text" name="name" [(ngModel)]="canard.name"/>
+        <input type="checkbox" name="isBlue" [(ngModel)]="isBlue"/> ce cannard est bleu
       </div>
   `
 })
 export class CanardComponent {
-  public componentId: string = 'canardComponent';
+  public componentId: string = 'canard';
 
   @Input()
-  public canard: ICanard;
+  public canard: Canard;
 
+  public get isBlue(): boolean {
+    return this.canard.color === 'blue';
+  }
+
+  public set isBlue(value: boolean) {
+    this.canard.color = value ? 'blue' : 'red';
+  }
 
   constructor() {
+
   }
 }

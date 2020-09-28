@@ -4,9 +4,11 @@ import { KamouloxSubject } from "./data.subject";
 import { Observable, merge, combineLatest } from "rxjs";
 import { ignoreElements, map, distinctUntilChanged, tap } from "rxjs/operators";
 import { mitterrandRule, pressingRule, beaujolaisRule } from "./kamoulox.rules";
+import { Canard } from '../models/canard';
 
 export interface Kamoulox {
-  canard: string;
+  // canard: string;
+  canard: Canard;
   beaujolais: number;
   mitterrand: string;
   pressing: string;
@@ -21,12 +23,15 @@ export class KamouloxService {
   config$ = new KamouloxConfigSubject({
     canard: { visible: true },
     beaujolais: { visible: true },
-    mitterrand: { visible: true },
+    mitterrand: { visible: false },
     pressing: { visible: true, label: "pressing" }
   });
 
   kamoulox$ = new KamouloxSubject({
-    canard: "",
+    canard: {
+      name: "",
+      color: "red"
+    },
     beaujolais: 0,
     mitterrand: "parapluie",
     pressing: ""
@@ -87,7 +92,9 @@ export class KamouloxService {
   > {
     const fromKamoulox$ = this.kamoulox$.pipe(
       map(kamoulox => keys.map(key => kamoulox[key])),
-      distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
+      distinctUntilChanged((x, y) => {
+        return JSON.stringify(x) === JSON.stringify(y)
+      })
     );
 
     sources = sources || [];
