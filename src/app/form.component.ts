@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormControl, NgForm } from "@angular/forms";
+import { FormGroup, FormControl, NgForm, Validators } from "@angular/forms";
 import { Kamoulox, KamouloxService } from "./services/kamoulox.service";
 import { KamouloxConfigSubject } from "./services/config.subject";
 import { KamouloxSubject } from "./services/data.subject";
@@ -13,7 +13,13 @@ import { delay } from 'rxjs/operators';
       <kmx-canard [canard]="kamoulox.canard"></kmx-canard>
       <div class="form-group">
         <label>beaujolais</label>
-        <input name="beaujolais" [(ngModel)]="kamoulox.beaujolais" type="number"/>
+        <input
+          name="beaujolais"
+          [(ngModel)]="kamoulox.beaujolais"
+          [style.borderColor]="(beaujolaisModel.touched && beaujolaisModel.invalid) ? 'red': ''"
+          #beaujolaisModel="ngModel"
+          type="number"
+          [validatorInjector]="minOneValidator"/>
       </div>
       <div class="form-group" *ngIf="config$.mitterrand.visible | async">
         <label>
@@ -35,6 +41,8 @@ import { delay } from 'rxjs/operators';
 })
 export class FormComponent implements OnInit, AfterViewInit {
 
+  public minOneValidator = Validators.min(1);
+
   kamoulox: Kamoulox;
 
   // form = new FormGroup({
@@ -43,6 +51,7 @@ export class FormComponent implements OnInit, AfterViewInit {
   //   mitterrand: new FormControl(),
   //   pressing: new FormControl()
   // });
+
   @ViewChild('kamouloxForm')
   public kamouloxNgForm: NgForm;
 

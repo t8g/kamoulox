@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
 import { FormComponent } from "./form.component";
 import { CanardComponent } from './form-component/coin-coin.component';
+import { ValidatorInjectorModule } from './magic/validator-injector.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { CanardComponent } from './form-component/coin-coin.component';
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    ValidatorInjectorModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, SkipSelf } from "@angular/core";
-import { ControlContainer } from '@angular/forms';
+import { ControlContainer, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Canard } from '../models/canard';
 
 export const controlContainerFactory = (container: ControlContainer) => container;
@@ -22,6 +22,7 @@ export const controlContainerFactory = (container: ControlContainer) => containe
           [style.borderColor]="(nameModel.touched && nameModel.invalid) ? 'red': ''"
           [(ngModel)]="canard.name"
           #nameModel="ngModel"
+          [validatorInjector]="canardValidator"
           required/>
         <input type="checkbox" name="isBlue" [(ngModel)]="isBlue"/> ce cannard est bleu
       </div>
@@ -41,6 +42,11 @@ export class CanardComponent {
     this.canard.color = value ? 'blue' : 'red';
   }
 
+  public canardValidator: ValidatorFn = (control: FormControl): ValidationErrors | null => {
+    const name = control.value;
+
+    return name !== 'donald' ? { isNotGood: true } : null;
+  }
   constructor() {
 
   }
