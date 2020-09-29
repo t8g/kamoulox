@@ -1,5 +1,5 @@
-import { Component, forwardRef, Input, OnInit, SkipSelf } from "@angular/core";
-import { ControlContainer, ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { ChangeDetectorRef, Component, forwardRef, Injector, Input, OnInit, SkipSelf, ViewChild } from "@angular/core";
+import { ControlContainer, ControlValueAccessor, FormControl, NgControl, NgModel, NG_VALUE_ACCESSOR, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Canard } from '../models/canard';
 
 
@@ -18,24 +18,14 @@ import { Canard } from '../models/canard';
         <input name="pressing"
           [(ngModel)]="pressingValue"
           (ngModelChange)="propagateChange(pressingValue)"
-          (blur)="propagateTouch(pressingValue)"/>
+          (blur)="propagateTouch(pressingValue)"
+          [style.borderColor]="(pressingModel.touched && pressingModel.invalid) ? 'red': ''"
+          #pressingModel="ngModel"
+          [required]="_required"/>
       </div>
-<!--
-
-      <div class="form-group" [ngModelGroup]="componentId" #modelGroup="ngModelGroup">
-        <label>canard</label>
-        <input type="text"
-          name="name"
-          [style.borderColor]="(nameModel.touched && nameModel.invalid) ? 'red': ''"
-          [(ngModel)]="canard.name"
-          #nameModel="ngModel"
-          [validatorInjector]="canardValidator"
-          required/>
-        <input type="checkbox" name="isBlue" [(ngModel)]="isBlue"/> ce cannard est bleu
-      </div> -->
   `
 })
-export class PressingComponent implements ControlValueAccessor {
+export class PressingComponent implements ControlValueAccessor, OnInit {
 
   @Input()
   public label: string;
@@ -44,11 +34,21 @@ export class PressingComponent implements ControlValueAccessor {
   public propagateChange = (_: string) => {};
   public propagateTouch = (_: string) => {};
 
-  constructor() {
+  @ViewChild(NgModel) ngModel: NgModel;
+
+  public _required: boolean;
+  @Input()
+  public set required(required) {
+    this._required = (typeof required === 'string') || required;
+  }
+
+  constructor(
+    private cd: ChangeDetectorRef,
+    private _injector: Injector
+  ) {
   }
 
   public writeValue(pressingValue: string): void {
-    console.log('pressingvalue', pressingValue);
     this.pressingValue = pressingValue;
   }
 
@@ -59,4 +59,53 @@ export class PressingComponent implements ControlValueAccessor {
     this.propagateTouch = fn;
   }
   public setDisabledState(isDisabled: boolean): void { }
+
+  // les lignes ci dessous vont vous surprendre...
+
+
+
+
+
+
+  // je suis sérieux
+
+
+
+
+
+
+  // bon tant pis
+  public ngOnInit(): void {
+    const self = this;
+    // did you get the joke ?
+    const selfControl = (this._injector.get(NgControl) as NgControl).control;
+
+    setTimeout(() => {
+
+      if (selfControl?.markAsTouched) {
+        const originalMarkAsTouched = selfControl.markAsTouched;
+
+        selfControl.markAsTouched = function () {
+          originalMarkAsTouched.apply(this, arguments);
+          self.ngModel.control.markAsTouched();
+          // au cas ou on voudrait faire du onpush
+          self.cd.detectChanges();
+        };
+      }
+
+      if (selfControl?.updateValueAndValidity) {
+        const originalUpdateValueAndValidity = selfControl.updateValueAndValidity;
+
+        selfControl.updateValueAndValidity = function () {
+          originalUpdateValueAndValidity.apply(this, arguments);
+          self.ngModel.control.updateValueAndValidity();
+          self.cd.detectChanges();
+        };
+      }
+    });
+  }
+
+  // sinon il y a ça mais bon...
+  // https://stackoverflow.com/questions/45911920/how-to-access-the-validator-required-inside-a-custom-component
+
 }
