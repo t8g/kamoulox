@@ -17,7 +17,12 @@ export const controlContainerFactory = (container: ControlContainer) => containe
   template: `
       <div class="form-group" [ngModelGroup]="componentId" #modelGroup="ngModelGroup">
         <label>canard</label>
-        <input type="text" name="name" [(ngModel)]="canard.name"/>
+        <input type="text"
+          name="name"
+          [style.borderColor]="(nameModel.touched && nameModel.invalid) ? 'red': ''"
+          [(ngModel)]="canard.name"
+          #nameModel="ngModel"
+          required/>
         <input type="checkbox" name="isBlue" [(ngModel)]="isBlue"/> ce cannard est bleu
       </div>
   `

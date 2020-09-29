@@ -13,7 +13,7 @@ import { delay } from 'rxjs/operators';
       <kmx-canard [canard]="kamoulox.canard"></kmx-canard>
       <div class="form-group">
         <label>beaujolais</label>
-        <input name="beaujolais" [(ngModel)]="kamoulox.beaujolais" type="number" />
+        <input name="beaujolais" [(ngModel)]="kamoulox.beaujolais" type="number"/>
       </div>
       <div class="form-group" *ngIf="config$.mitterrand.visible | async">
         <label>
@@ -78,6 +78,9 @@ export class FormComponent implements OnInit, AfterViewInit {
   public onSubmit(): void {
     this.kamouloxNgForm.form.markAllAsTouched();
     console.log('this.kamoulox', this.kamoulox);
+    if (this.kamouloxNgForm.form.valid) {
+      console.log('this form is valid');
+    }
   }
 
   private deepDuplicate<T>(input: T): T {
