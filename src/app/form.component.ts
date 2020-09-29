@@ -30,10 +30,11 @@ import { delay } from 'rxjs/operators';
           <option>homard</option>
         </select>
       </div>
-      <div class="form-group">
+      <kmx-pressing [label]='config$.pressing.label | async' name="pressing" [(ngModel)]="kamoulox.pressing" required></kmx-pressing>
+      <!-- <div class="form-group">
         <label>{{ config$.pressing.label | async }}</label>
         <input name="pressing" [(ngModel)]="kamoulox.pressing" />
-      </div>
+      </div> -->
       <button type="submit">Kamoulox !</button>
 
     </form>
@@ -89,6 +90,8 @@ export class FormComponent implements OnInit, AfterViewInit {
     console.log('this.kamoulox', this.kamoulox);
     if (this.kamouloxNgForm.form.valid) {
       console.log('this form is valid');
+    } else {
+      console.log('this form is NOT valid');
     }
   }
 
